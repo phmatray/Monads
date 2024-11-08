@@ -1,57 +1,60 @@
 ﻿Console.WriteLine("Monads in C#");
-
-Func<int, NumberWithLogs> square = x =>
-{
-    return new NumberWithLogs(
-        x * x,
-        [$"Squared {x} to get {x * x}"]);
-};
-
-Func<int, NumberWithLogs> addOne = x =>
-{
-    return new NumberWithLogs(
-        x + 1,
-        [$"Added 1 to {x} to get {x + 1}"]);
-};
-
-Func<int, NumberWithLogs> multiplyByThree = x =>
-{
-    return new NumberWithLogs(
-        x * 3,
-        [$"Multiplied {x} by 3 to get {x * 3}"]);
-};
-
-Func<int, NumberWithLogs> wrapWithLogs = x =>
-{
-    return new NumberWithLogs(x, []);
-};
-
-Func<NumberWithLogs, Func<int, NumberWithLogs>, NumberWithLogs> runWithLogs = (input, transform) =>
-{
-    var newNumberWithLogs = transform(input.Result);
-    return new NumberWithLogs(
-        newNumberWithLogs.Result,
-        input.Logs.Concat(newNumberWithLogs.Logs).ToArray());
-};
-
-// old style
-// var result1 = square(square(wrapWithLogs(2)));
-// new style
-// var result1 = runWithLogs(wrapWithLogs(2), square, square);
-var result1A = wrapWithLogs(5);
-var result1B = runWithLogs(result1A, addOne);
-var result1C = runWithLogs(result1B, square);
-var result1D = runWithLogs(result1C, multiplyByThree);
 Console.WriteLine();
-Console.WriteLine($"Logs 1: {string.Join(", ", result1D.Logs)}");
-Console.WriteLine($"Result 1: {result1D.Result}");
 
-// old style
-// var result2 = addOne(wrapWithLogs(5));
-// new style
-var result2 = runWithLogs(wrapWithLogs(5), addOne);
+// Running a series of transformations on the initial value of 5
+// Here we use multiple functions: AddOne, Square, and MultiplyByThree
+var result1 = RunWithLogsMultiple(WrapWithLogs(5), AddOne, Square, MultiplyByThree);
+PrintResult(result1);
+
 Console.WriteLine();
-Console.WriteLine($"Logs 2: {string.Join(", ", result2.Logs)}");
-Console.WriteLine($"Result 2: {result2.Result}");
 
+// Running a single transformation on the initial value of 5
+// Here we use only the AddOne function
+var result2 = RunWithLogs(WrapWithLogs(5), AddOne);
+PrintResult(result2);
+
+return;
+
+// Function to print the final result and the logs collected during transformations
+void PrintResult(NumberWithLogs result)
+{
+    Console.WriteLine($"Logs: {string.Join(", ", result.Logs)}");
+    Console.WriteLine($"Result: {result.Result}");
+}
+
+// Function to square a number and return the result along with a log message
+NumberWithLogs Square(int x)
+    => new(x * x, [$"Squared {x} to get {x * x}"]);
+
+// Function to add one to a number and return the result along with a log message
+NumberWithLogs AddOne(int x)
+    => new(x + 1, [$"Added 1 to {x} to get {x + 1}"]);
+
+// Function to multiply a number by three and return the result along with a log message
+NumberWithLogs MultiplyByThree(int x)
+    => new(x * 3, [$"Multiplied {x} by 3 to get {x * 3}"]);
+
+// Function to wrap an integer value with an empty log, used to initialize the monad
+NumberWithLogs WrapWithLogs(int x)
+    => new(x, []);
+
+// Function to apply a single transformation to a NumberWithLogs instance
+// Combines the input logs with the logs from the transformation
+NumberWithLogs RunWithLogs(NumberWithLogs input, Func<int, NumberWithLogs> transform)
+{
+    // Apply the transformation to get the new result
+    var transformed = transform(input.Result);
+    // Combine the logs from the input and the transformation
+    return transformed with
+    {
+        Logs = input.Logs.Concat(transformed.Logs).ToArray()
+    };
+}
+
+// Function to apply multiple transformations to a NumberWithLogs instance
+// Uses Aggregate to sequentially apply each function and collect all logs
+NumberWithLogs RunWithLogsMultiple(NumberWithLogs input, params Func<int, NumberWithLogs>[] transforms)
+    => transforms.Aggregate(input, RunWithLogs);
+
+// Record type to hold the result and associated logs
 internal record NumberWithLogs(int Result, string[] Logs);
