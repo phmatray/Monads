@@ -92,15 +92,3 @@ public static class ScenarioValidation
             : ValidationResult.Success();
     }
 }
-
-// Record type to hold validation result status and errors
-internal record ValidationResult(bool IsValid, string[] Errors)
-{
-    // Static method to create a successful validation result
-    public static ValidationResult Success()
-        => new(true, []);
-
-    // Static method to create a failed validation result with error messages
-    public static ValidationResult Failure(params string[] errors)
-        => new(false, errors);
-}

@@ -58,6 +58,3 @@ public static class ScenarioBasic
     static NumberWithLogs RunWithLogsMultiple(NumberWithLogs input, params Func<int, NumberWithLogs>[] transforms)
         => transforms.Aggregate(input, RunWithLogs);
 }
-
-// Record type to hold the result and associated logs
-internal record NumberWithLogs(int Result, string[] Logs);
