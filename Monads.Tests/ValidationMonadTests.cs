@@ -2,7 +2,6 @@ using Monads;
 
 namespace Monads.Tests;
 
-[TestFixture]
 public class ValidationMonadTests
 {
     // Helper validation functions
@@ -63,118 +62,118 @@ public class ValidationMonadTests
             : ValidationResult.Success();
     }
 
-    [Test]
+    [Fact]
     public void ValidationResult_Success_ShouldHaveEmptyErrorsAndBeValid()
     {
         // Act
         var result = ValidationResult.Success();
 
         // Assert
-        Assert.That(result.IsValid, Is.True);
-        Assert.That(result.Errors, Is.Empty);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
-    [Test]
+    [Fact]
     public void ValidationResult_Failure_WithSingleError_ShouldContainError()
     {
         // Act
         var result = ValidationResult.Failure("Error message");
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors, Has.Length.EqualTo(1));
-        Assert.That(result.Errors[0], Is.EqualTo("Error message"));
+        Assert.False(result.IsValid);
+        Assert.Equal(1, result.Errors.Length);
+        Assert.Equal("Error message", result.Errors[0]);
     }
 
-    [Test]
+    [Fact]
     public void ValidationResult_Failure_WithMultipleErrors_ShouldContainAllErrors()
     {
         // Act
         var result = ValidationResult.Failure("Error 1", "Error 2", "Error 3");
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors, Has.Length.EqualTo(3));
-        Assert.That(result.Errors[0], Is.EqualTo("Error 1"));
-        Assert.That(result.Errors[1], Is.EqualTo("Error 2"));
-        Assert.That(result.Errors[2], Is.EqualTo("Error 3"));
+        Assert.False(result.IsValid);
+        Assert.Equal(3, result.Errors.Length);
+        Assert.Equal("Error 1", result.Errors[0]);
+        Assert.Equal("Error 2", result.Errors[1]);
+        Assert.Equal("Error 3", result.Errors[2]);
     }
 
-    [Test]
+    [Fact]
     public void IsPositive_WithPositiveNumber_ShouldSucceed()
     {
         // Act
         var result = IsPositive(10);
 
         // Assert
-        Assert.That(result.IsValid, Is.True);
+        Assert.True(result.IsValid);
     }
 
-    [Test]
+    [Fact]
     public void IsPositive_WithNegativeNumber_ShouldFail()
     {
         // Act
         var result = IsPositive(-5);
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors[0], Is.EqualTo("-5 is not positive."));
+        Assert.False(result.IsValid);
+        Assert.Equal("-5 is not positive.", result.Errors[0]);
     }
 
-    [Test]
+    [Fact]
     public void IsPositive_WithZero_ShouldFail()
     {
         // Act
         var result = IsPositive(0);
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors[0], Is.EqualTo("0 is not positive."));
+        Assert.False(result.IsValid);
+        Assert.Equal("0 is not positive.", result.Errors[0]);
     }
 
-    [Test]
+    [Fact]
     public void IsNegative_WithNegativeNumber_ShouldSucceed()
     {
         // Act
         var result = IsNegative(-10);
 
         // Assert
-        Assert.That(result.IsValid, Is.True);
+        Assert.True(result.IsValid);
     }
 
-    [Test]
+    [Fact]
     public void IsNegative_WithPositiveNumber_ShouldFail()
     {
         // Act
         var result = IsNegative(5);
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors[0], Is.EqualTo("5 is not negative."));
+        Assert.False(result.IsValid);
+        Assert.Equal("5 is not negative.", result.Errors[0]);
     }
 
-    [Test]
+    [Fact]
     public void IsEven_WithEvenNumber_ShouldSucceed()
     {
         // Act
         var result = IsEven(4);
 
         // Assert
-        Assert.That(result.IsValid, Is.True);
+        Assert.True(result.IsValid);
     }
 
-    [Test]
+    [Fact]
     public void IsEven_WithOddNumber_ShouldFail()
     {
         // Act
         var result = IsEven(7);
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors[0], Is.EqualTo("7 is not even."));
+        Assert.False(result.IsValid);
+        Assert.Equal("7 is not even.", result.Errors[0]);
     }
 
-    [Test]
+    [Fact]
     public void LessThan_WithValueLessThanMax_ShouldSucceed()
     {
         // Arrange
@@ -184,10 +183,10 @@ public class ValidationMonadTests
         var result = validate(5);
 
         // Assert
-        Assert.That(result.IsValid, Is.True);
+        Assert.True(result.IsValid);
     }
 
-    [Test]
+    [Fact]
     public void LessThan_WithValueGreaterThanMax_ShouldFail()
     {
         // Arrange
@@ -197,32 +196,32 @@ public class ValidationMonadTests
         var result = validate(15);
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors[0], Is.EqualTo("15 is not less than 10."));
+        Assert.False(result.IsValid);
+        Assert.Equal("15 is not less than 10.", result.Errors[0]);
     }
 
-    [Test]
+    [Fact]
     public void NotNullOrEmpty_WithValidString_ShouldSucceed()
     {
         // Act
         var result = NotNullOrEmpty("Hello");
 
         // Assert
-        Assert.That(result.IsValid, Is.True);
+        Assert.True(result.IsValid);
     }
 
-    [Test]
+    [Fact]
     public void NotNullOrEmpty_WithEmptyString_ShouldFail()
     {
         // Act
         var result = NotNullOrEmpty("");
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors[0], Is.EqualTo("String is null or empty."));
+        Assert.False(result.IsValid);
+        Assert.Equal("String is null or empty.", result.Errors[0]);
     }
 
-    [Test]
+    [Fact]
     public void MaxLength_WithStringWithinLimit_ShouldSucceed()
     {
         // Arrange
@@ -232,10 +231,10 @@ public class ValidationMonadTests
         var result = validate("Hello");
 
         // Assert
-        Assert.That(result.IsValid, Is.True);
+        Assert.True(result.IsValid);
     }
 
-    [Test]
+    [Fact]
     public void MaxLength_WithStringExceedingLimit_ShouldFail()
     {
         // Arrange
@@ -245,82 +244,82 @@ public class ValidationMonadTests
         var result = validate("HelloWorld");
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors[0], Is.EqualTo("String length exceeds 5 characters."));
+        Assert.False(result.IsValid);
+        Assert.Equal("String length exceeds 5 characters.", result.Errors[0]);
     }
 
-    [Test]
+    [Fact]
     public void RunValidations_WithAllPassingValidations_ShouldSucceed()
     {
         // Act
         var result = RunValidations(10, IsPositive, IsEven, LessThan(20));
 
         // Assert
-        Assert.That(result.IsValid, Is.True);
-        Assert.That(result.Errors, Is.Empty);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
-    [Test]
+    [Fact]
     public void RunValidations_WithSingleFailingValidation_ShouldFail()
     {
         // Act
         var result = RunValidations(41, IsNegative, IsEven, LessThan(10));
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors, Has.Length.EqualTo(3));
-        Assert.That(result.Errors[0], Is.EqualTo("41 is not negative."));
-        Assert.That(result.Errors[1], Is.EqualTo("41 is not even."));
-        Assert.That(result.Errors[2], Is.EqualTo("41 is not less than 10."));
+        Assert.False(result.IsValid);
+        Assert.Equal(3, result.Errors.Length);
+        Assert.Equal("41 is not negative.", result.Errors[0]);
+        Assert.Equal("41 is not even.", result.Errors[1]);
+        Assert.Equal("41 is not less than 10.", result.Errors[2]);
     }
 
-    [Test]
+    [Fact]
     public void RunValidations_WithMultipleFailingValidations_ShouldCollectAllErrors()
     {
         // Act
         var result = RunValidations(-5, IsPositive, IsEven);
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors, Has.Length.EqualTo(2));
-        Assert.That(result.Errors[0], Is.EqualTo("-5 is not positive."));
-        Assert.That(result.Errors[1], Is.EqualTo("-5 is not even."));
+        Assert.False(result.IsValid);
+        Assert.Equal(2, result.Errors.Length);
+        Assert.Equal("-5 is not positive.", result.Errors[0]);
+        Assert.Equal("-5 is not even.", result.Errors[1]);
     }
 
-    [Test]
+    [Fact]
     public void RunValidations_WithNoValidations_ShouldSucceed()
     {
         // Act
         var result = RunValidations(42);
 
         // Assert
-        Assert.That(result.IsValid, Is.True);
-        Assert.That(result.Errors, Is.Empty);
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
     }
 
-    [Test]
+    [Fact]
     public void RunValidations_WithStringValidations_ShouldWork()
     {
         // Act
         var result = RunValidations("Hello", NotNullOrEmpty, MaxLength(10));
 
         // Assert
-        Assert.That(result.IsValid, Is.True);
+        Assert.True(result.IsValid);
     }
 
-    [Test]
+    [Fact]
     public void RunValidations_WithComplexValidationChain_ShouldCollectAllErrors()
     {
         // Act
         var result = RunValidations(100, IsPositive, IsEven, LessThan(50), GreaterThan(10));
 
         // Assert
-        Assert.That(result.IsValid, Is.False);
-        Assert.That(result.Errors, Has.Length.EqualTo(1));
-        Assert.That(result.Errors[0], Is.EqualTo("100 is not less than 50."));
+        Assert.False(result.IsValid);
+        Assert.Equal(1, result.Errors.Length);
+        Assert.Equal("100 is not less than 50.", result.Errors[0]);
     }
 
-    [Test]
+    [Fact]
     public void RunValidations_WithGenericType_ShouldSupportAnyType()
     {
         // Arrange
@@ -338,10 +337,10 @@ public class ValidationMonadTests
         var result = RunValidations(new List<int> { 1, 2, 3 }, validateLength, validateMaxSize);
 
         // Assert
-        Assert.That(result.IsValid, Is.True);
+        Assert.True(result.IsValid);
     }
 
-    [Test]
+    [Fact]
     public void ValidationResult_ShouldBeImmutableRecord()
     {
         // Arrange
@@ -351,7 +350,7 @@ public class ValidationMonadTests
         var modified = original with { IsValid = true };
 
         // Assert
-        Assert.That(original.IsValid, Is.False);
-        Assert.That(modified.IsValid, Is.True);
+        Assert.False(original.IsValid);
+        Assert.True(modified.IsValid);
     }
 }
