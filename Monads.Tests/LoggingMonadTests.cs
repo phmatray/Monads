@@ -2,7 +2,6 @@ using Monads;
 
 namespace Monads.Tests;
 
-[TestFixture]
 public class LoggingMonadTests
 {
     // Helper methods to access internal members for testing
@@ -29,7 +28,7 @@ public class LoggingMonadTests
     private static NumberWithLogs RunWithLogsMultiple(NumberWithLogs input, params Func<int, NumberWithLogs>[] transforms)
         => transforms.Aggregate(input, RunWithLogs);
 
-    [Test]
+    [Fact]
     public void WrapWithLogs_ShouldCreateNumberWithLogsWithEmptyLogs()
     {
         // Arrange
@@ -39,11 +38,11 @@ public class LoggingMonadTests
         var result = WrapWithLogs(value);
 
         // Assert
-        Assert.That(result.Result, Is.EqualTo(5));
-        Assert.That(result.Logs, Is.Empty);
+        Assert.Equal(5, result.Result);
+        Assert.Empty(result.Logs);
     }
 
-    [Test]
+    [Fact]
     public void AddOne_ShouldIncrementValueAndLogOperation()
     {
         // Arrange
@@ -53,12 +52,12 @@ public class LoggingMonadTests
         var result = AddOne(value);
 
         // Assert
-        Assert.That(result.Result, Is.EqualTo(6));
-        Assert.That(result.Logs, Has.Length.EqualTo(1));
-        Assert.That(result.Logs[0], Is.EqualTo("Added 1 to 5 to get 6"));
+        Assert.Equal(6, result.Result);
+        Assert.Equal(1, result.Logs.Length);
+        Assert.Equal("Added 1 to 5 to get 6", result.Logs[0]);
     }
 
-    [Test]
+    [Fact]
     public void Square_ShouldSquareValueAndLogOperation()
     {
         // Arrange
@@ -68,12 +67,12 @@ public class LoggingMonadTests
         var result = Square(value);
 
         // Assert
-        Assert.That(result.Result, Is.EqualTo(16));
-        Assert.That(result.Logs, Has.Length.EqualTo(1));
-        Assert.That(result.Logs[0], Is.EqualTo("Squared 4 to get 16"));
+        Assert.Equal(16, result.Result);
+        Assert.Equal(1, result.Logs.Length);
+        Assert.Equal("Squared 4 to get 16", result.Logs[0]);
     }
 
-    [Test]
+    [Fact]
     public void MultiplyByThree_ShouldMultiplyValueAndLogOperation()
     {
         // Arrange
@@ -83,12 +82,12 @@ public class LoggingMonadTests
         var result = MultiplyByThree(value);
 
         // Assert
-        Assert.That(result.Result, Is.EqualTo(21));
-        Assert.That(result.Logs, Has.Length.EqualTo(1));
-        Assert.That(result.Logs[0], Is.EqualTo("Multiplied 7 by 3 to get 21"));
+        Assert.Equal(21, result.Result);
+        Assert.Equal(1, result.Logs.Length);
+        Assert.Equal("Multiplied 7 by 3 to get 21", result.Logs[0]);
     }
 
-    [Test]
+    [Fact]
     public void RunWithLogs_ShouldCombineLogsFromInputAndTransformation()
     {
         // Arrange
@@ -98,13 +97,13 @@ public class LoggingMonadTests
         var result = RunWithLogs(input, AddOne);
 
         // Assert
-        Assert.That(result.Result, Is.EqualTo(6));
-        Assert.That(result.Logs, Has.Length.EqualTo(2));
-        Assert.That(result.Logs[0], Is.EqualTo("Initial log"));
-        Assert.That(result.Logs[1], Is.EqualTo("Added 1 to 5 to get 6"));
+        Assert.Equal(6, result.Result);
+        Assert.Equal(2, result.Logs.Length);
+        Assert.Equal("Initial log", result.Logs[0]);
+        Assert.Equal("Added 1 to 5 to get 6", result.Logs[1]);
     }
 
-    [Test]
+    [Fact]
     public void RunWithLogsMultiple_ShouldApplyAllTransformationsInOrder()
     {
         // Arrange
@@ -115,14 +114,14 @@ public class LoggingMonadTests
         var result = RunWithLogsMultiple(input, AddOne, Square, MultiplyByThree);
 
         // Assert
-        Assert.That(result.Result, Is.EqualTo(108));
-        Assert.That(result.Logs, Has.Length.EqualTo(3));
-        Assert.That(result.Logs[0], Is.EqualTo("Added 1 to 5 to get 6"));
-        Assert.That(result.Logs[1], Is.EqualTo("Squared 6 to get 36"));
-        Assert.That(result.Logs[2], Is.EqualTo("Multiplied 36 by 3 to get 108"));
+        Assert.Equal(108, result.Result);
+        Assert.Equal(3, result.Logs.Length);
+        Assert.Equal("Added 1 to 5 to get 6", result.Logs[0]);
+        Assert.Equal("Squared 6 to get 36", result.Logs[1]);
+        Assert.Equal("Multiplied 36 by 3 to get 108", result.Logs[2]);
     }
 
-    [Test]
+    [Fact]
     public void RunWithLogsMultiple_WithSingleTransformation_ShouldBehaveLikeRunWithLogs()
     {
         // Arrange
@@ -132,12 +131,12 @@ public class LoggingMonadTests
         var result = RunWithLogsMultiple(input, Square);
 
         // Assert
-        Assert.That(result.Result, Is.EqualTo(100));
-        Assert.That(result.Logs, Has.Length.EqualTo(1));
-        Assert.That(result.Logs[0], Is.EqualTo("Squared 10 to get 100"));
+        Assert.Equal(100, result.Result);
+        Assert.Equal(1, result.Logs.Length);
+        Assert.Equal("Squared 10 to get 100", result.Logs[0]);
     }
 
-    [Test]
+    [Fact]
     public void RunWithLogsMultiple_WithNoTransformations_ShouldReturnOriginalInput()
     {
         // Arrange
@@ -147,11 +146,11 @@ public class LoggingMonadTests
         var result = RunWithLogsMultiple(input);
 
         // Assert
-        Assert.That(result.Result, Is.EqualTo(42));
-        Assert.That(result.Logs, Is.Empty);
+        Assert.Equal(42, result.Result);
+        Assert.Empty(result.Logs);
     }
 
-    [Test]
+    [Fact]
     public void MultipleOperations_ShouldPreserveOrderOfLogs()
     {
         // Arrange
@@ -162,27 +161,27 @@ public class LoggingMonadTests
         var result = RunWithLogsMultiple(input, Square, AddOne, Square);
 
         // Assert
-        Assert.That(result.Result, Is.EqualTo(25));
-        Assert.That(result.Logs, Has.Length.EqualTo(3));
-        Assert.That(result.Logs[0], Is.EqualTo("Squared 2 to get 4"));
-        Assert.That(result.Logs[1], Is.EqualTo("Added 1 to 4 to get 5"));
-        Assert.That(result.Logs[2], Is.EqualTo("Squared 5 to get 25"));
+        Assert.Equal(25, result.Result);
+        Assert.Equal(3, result.Logs.Length);
+        Assert.Equal("Squared 2 to get 4", result.Logs[0]);
+        Assert.Equal("Added 1 to 4 to get 5", result.Logs[1]);
+        Assert.Equal("Squared 5 to get 25", result.Logs[2]);
     }
 
-    [Test]
+    [Fact]
     public void NumberWithLogs_WithRecordSyntax_ShouldCreateCorrectly()
     {
         // Arrange & Act
         var result = new NumberWithLogs(42, ["Log 1", "Log 2"]);
 
         // Assert
-        Assert.That(result.Result, Is.EqualTo(42));
-        Assert.That(result.Logs, Has.Length.EqualTo(2));
-        Assert.That(result.Logs[0], Is.EqualTo("Log 1"));
-        Assert.That(result.Logs[1], Is.EqualTo("Log 2"));
+        Assert.Equal(42, result.Result);
+        Assert.Equal(2, result.Logs.Length);
+        Assert.Equal("Log 1", result.Logs[0]);
+        Assert.Equal("Log 2", result.Logs[1]);
     }
 
-    [Test]
+    [Fact]
     public void NumberWithLogs_WithModification_ShouldSupportRecordWith()
     {
         // Arrange
@@ -192,8 +191,8 @@ public class LoggingMonadTests
         var modified = original with { Result = 20 };
 
         // Assert
-        Assert.That(modified.Result, Is.EqualTo(20));
-        Assert.That(modified.Logs, Is.EqualTo(original.Logs));
-        Assert.That(original.Result, Is.EqualTo(10)); // Original unchanged
+        Assert.Equal(20, modified.Result);
+        Assert.Equal(original.Logs, modified.Logs);
+        Assert.Equal(10, original.Result); // Original unchanged
     }
 }
