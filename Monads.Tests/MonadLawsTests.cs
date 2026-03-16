@@ -8,7 +8,6 @@ namespace Monads.Tests;
 /// 2. Right Identity: m >>= return ≡ m
 /// 3. Associativity: (m >>= f) >>= g ≡ m >>= (x -> f x >>= g)
 /// </summary>
-[TestFixture]
 public class MonadLawsTests
 {
     // Helper methods to access internal members for testing
@@ -40,7 +39,7 @@ public class MonadLawsTests
     /// This law states that wrapping a value and then applying a function
     /// should be the same as just applying the function to the value.
     /// </summary>
-    [Test]
+    [Fact]
     public void LeftIdentity_WithAddOne_ShouldHoldTrue()
     {
         // Arrange
@@ -52,11 +51,11 @@ public class MonadLawsTests
         var right = f(a);                             // f a
 
         // Assert
-        Assert.That(left.Result, Is.EqualTo(right.Result));
-        Assert.That(left.Logs, Is.EqualTo(right.Logs));
+        Assert.Equal(right.Result, left.Result);
+        Assert.Equal(right.Logs, left.Logs);
     }
 
-    [Test]
+    [Fact]
     public void LeftIdentity_WithSquare_ShouldHoldTrue()
     {
         // Arrange
@@ -68,11 +67,11 @@ public class MonadLawsTests
         var right = f(a);
 
         // Assert
-        Assert.That(left.Result, Is.EqualTo(right.Result));
-        Assert.That(left.Logs, Is.EqualTo(right.Logs));
+        Assert.Equal(right.Result, left.Result);
+        Assert.Equal(right.Logs, left.Logs);
     }
 
-    [Test]
+    [Fact]
     public void LeftIdentity_WithMultiplyByThree_ShouldHoldTrue()
     {
         // Arrange
@@ -84,8 +83,8 @@ public class MonadLawsTests
         var right = f(a);
 
         // Assert
-        Assert.That(left.Result, Is.EqualTo(right.Result));
-        Assert.That(left.Logs, Is.EqualTo(right.Logs));
+        Assert.Equal(right.Result, left.Result);
+        Assert.Equal(right.Logs, left.Logs);
     }
 
     #endregion
@@ -98,7 +97,7 @@ public class MonadLawsTests
     /// This law states that applying the "return" function (WrapWithLogs)
     /// to a monad should give back the same monad value.
     /// </summary>
-    [Test]
+    [Fact]
     public void RightIdentity_WithSimpleValue_ShouldHoldTrue()
     {
         // Arrange
@@ -110,14 +109,14 @@ public class MonadLawsTests
         var right = m;                           // m
 
         // Assert
-        Assert.That(left.Result, Is.EqualTo(right.Result));
+        Assert.Equal(right.Result, left.Result);
         // Note: Logs will differ because RunWithLogs concatenates logs
         // This is a characteristic of the Writer monad - it accumulates effects
         // So we verify that the original logs are preserved as a prefix
-        Assert.That(left.Logs.Take(right.Logs.Length).ToArray(), Is.EqualTo(right.Logs));
+        Assert.Equal(right.Logs, left.Logs.Take(right.Logs.Length).ToArray());
     }
 
-    [Test]
+    [Fact]
     public void RightIdentity_WithEmptyLogs_ShouldHoldTrue()
     {
         // Arrange
@@ -129,8 +128,8 @@ public class MonadLawsTests
         var right = m;
 
         // Assert
-        Assert.That(left.Result, Is.EqualTo(right.Result));
-        Assert.That(left.Logs, Is.EqualTo(right.Logs));
+        Assert.Equal(right.Result, left.Result);
+        Assert.Equal(right.Logs, left.Logs);
     }
 
     #endregion
@@ -143,7 +142,7 @@ public class MonadLawsTests
     /// This law states that the order in which we nest monadic operations
     /// doesn't matter - the result should be the same.
     /// </summary>
-    [Test]
+    [Fact]
     public void Associativity_WithAddOneAndSquare_ShouldHoldTrue()
     {
         // Arrange
@@ -159,11 +158,11 @@ public class MonadLawsTests
         var right = RunWithLogs(m, x => RunWithLogs(f(x), g));
 
         // Assert
-        Assert.That(left.Result, Is.EqualTo(right.Result));
-        Assert.That(left.Logs, Is.EqualTo(right.Logs));
+        Assert.Equal(right.Result, left.Result);
+        Assert.Equal(right.Logs, left.Logs);
     }
 
-    [Test]
+    [Fact]
     public void Associativity_WithSquareAndMultiplyByThree_ShouldHoldTrue()
     {
         // Arrange
@@ -176,11 +175,11 @@ public class MonadLawsTests
         var right = RunWithLogs(m, x => RunWithLogs(f(x), g));
 
         // Assert
-        Assert.That(left.Result, Is.EqualTo(right.Result));
-        Assert.That(left.Logs, Is.EqualTo(right.Logs));
+        Assert.Equal(right.Result, left.Result);
+        Assert.Equal(right.Logs, left.Logs);
     }
 
-    [Test]
+    [Fact]
     public void Associativity_WithThreeOperations_ShouldHoldTrue()
     {
         // Arrange
@@ -197,11 +196,11 @@ public class MonadLawsTests
         var right = RunWithLogs(m, x => RunWithLogs(RunWithLogs(f(x), g), h));
 
         // Assert
-        Assert.That(left.Result, Is.EqualTo(right.Result));
-        Assert.That(left.Logs, Is.EqualTo(right.Logs));
+        Assert.Equal(right.Result, left.Result);
+        Assert.Equal(right.Logs, left.Logs);
     }
 
-    [Test]
+    [Fact]
     public void Associativity_AlternativeGrouping_ShouldHoldTrue()
     {
         // Arrange
@@ -220,8 +219,8 @@ public class MonadLawsTests
                 RunWithLogs(g(y), h)));
 
         // Assert
-        Assert.That(left.Result, Is.EqualTo(right.Result));
-        Assert.That(left.Logs, Is.EqualTo(right.Logs));
+        Assert.Equal(right.Result, left.Result);
+        Assert.Equal(right.Logs, left.Logs);
     }
 
     #endregion
@@ -231,7 +230,7 @@ public class MonadLawsTests
     /// <summary>
     /// Tests that verify all three laws work together in practical scenarios
     /// </summary>
-    [Test]
+    [Fact]
     public void AllMonadLaws_ShouldWorkTogether()
     {
         // This test demonstrates that the monad laws ensure predictable composition
@@ -256,17 +255,17 @@ public class MonadLawsTests
         var result3 = RunWithLogs(step1, Square);
 
         // All should produce the same result
-        Assert.That(result1.Result, Is.EqualTo(result2.Result));
-        Assert.That(result2.Result, Is.EqualTo(result3.Result));
-        Assert.That(result1.Logs, Is.EqualTo(result2.Logs));
-        Assert.That(result2.Logs, Is.EqualTo(result3.Logs));
+        Assert.Equal(result2.Result, result1.Result);
+        Assert.Equal(result3.Result, result2.Result);
+        Assert.Equal(result2.Logs, result1.Logs);
+        Assert.Equal(result3.Logs, result2.Logs);
     }
 
-    [TestCase(0)]
-    [TestCase(1)]
-    [TestCase(5)]
-    [TestCase(10)]
-    [TestCase(100)]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(100)]
     public void MonadLaws_ShouldHoldForVariousInputValues(int input)
     {
         // Arrange
@@ -277,13 +276,13 @@ public class MonadLawsTests
         // Act & Assert - Left Identity
         var leftIdentityLeft = RunWithLogs(WrapWithLogs(input), f);
         var leftIdentityRight = f(input);
-        Assert.That(leftIdentityLeft.Result, Is.EqualTo(leftIdentityRight.Result));
+        Assert.Equal(leftIdentityRight.Result, leftIdentityLeft.Result);
 
         // Act & Assert - Associativity
         var assocLeft = RunWithLogs(RunWithLogs(m, f), g);
         var assocRight = RunWithLogs(m, x => RunWithLogs(f(x), g));
-        Assert.That(assocLeft.Result, Is.EqualTo(assocRight.Result));
-        Assert.That(assocLeft.Logs, Is.EqualTo(assocRight.Logs));
+        Assert.Equal(assocRight.Result, assocLeft.Result);
+        Assert.Equal(assocRight.Logs, assocLeft.Logs);
     }
 
     #endregion
