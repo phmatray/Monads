@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **This repository has moved.** The code now lives in **[phmatray/dotnet-toolbelt](https://github.com/phmatray/dotnet-toolbelt)** under [`src/monads`](https://github.com/phmatray/dotnet-toolbelt/tree/main/src/monads) — full git history preserved. This repository is archived (read-only). The NuGet package ID is unchanged.
+
 ![Monads banner](.github/banner.png)
 
 # Monads in C#
